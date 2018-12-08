@@ -1,0 +1,43 @@
+<html>
+    <head>
+            <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <script>
+                var socket = io.connect();
+                var isim = prompt('lutfen ismini gir');
+
+                socket.emit('gonder', isim);
+
+                socket.on('all', function(veri){
+                    $("#all").html(veri + " Oturum Açtı");
+                })
+            </script>
+            <script>
+                function yazildi(){
+                    var tus = window.event.keyCode;
+
+                    if(tus == 13){//enter tuşu anlamina geliyor
+                        var metin = document.getElementById('mesaj').value;
+                        socket.emit('mesaj', {"mesaj":metin, "kullanici":isim });
+                        document.getElementById('mesaj').value = "";
+                    }
+                }
+
+                socket.on('mesajlarial', function(veri){
+                    console.log("veriyi yaz");
+                    document.getElementById('mesajlar').append('Gönderici= '+veri.kullanici+ " Mesaj " + veri.mesaj);
+                });
+            </script>
+    </head>
+    <body>
+        <div style="width:500px; margin:100px auto;text-align:center">    
+            <h1>Socket.io ile Mesajlarin Veri tabanına kaydedilmesi</h1>
+            <div id="all"></div>
+
+            <textarea onkeypress="yazildi()" id="mesaj" cols="30" rows="10"></textarea>
+            <div id="mesajlar">
+
+            </div>
+        </div>
+    </body>
+</html>
